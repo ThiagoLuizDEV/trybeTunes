@@ -1,5 +1,7 @@
 import React from 'react';
 import Header from '../components/Header';
+import AlbumSearch from '../components/AlbumSearch';
+import searchAlbumsAPI from '../services/searchAlbumsAPI';
 
 class Search extends React.Component {
   constructor() {
@@ -7,6 +9,8 @@ class Search extends React.Component {
     this.state = {
       nome: '',
       validação: true,
+      albums: [],
+      nomeDigitado: '',
     };
   }
 
@@ -28,8 +32,18 @@ class Search extends React.Component {
     });
   };
 
+  handleSubmit = async (event) => {
+    event.preventDefault();
+    const { nome } = this.state;
+    const func = await searchAlbumsAPI(nome);
+    this.setState({ albums: func });
+    this.setState({ nomeDigitado: nome });
+    this.setState({ nome: '' });
+  };
+
   render() {
-    const { nome, validação } = this.state;
+    const { nome, validação, albums, nomeDigitado } = this.state;
+
     return (
       <div data-testid="page-search">
         <Header />
@@ -47,10 +61,28 @@ class Search extends React.Component {
             data-testid="search-artist-button"
             type="submit"
             disabled={ validação }
+            onClick={ this.handleSubmit }
           >
             Pesquisar
           </button>
         </form>
+
+        {albums.length > 0
+          ? <h1>{`Resultado de álbuns de: ${nomeDigitado}`}</h1>
+          : null }
+
+        { albums.length > 0
+          ? albums.map((album) => (
+            <AlbumSearch
+              key={ album.collectionId }
+              artistId={ album.artistId }
+              artistName={ album.artistName }
+              collectionId={ album.collectionId }
+              collectionName={ album.collectionName }
+              artworkUrl100={ album.artworkUrl100 }
+            />
+          ))
+          : <p>Nenhum álbum foi encontrado</p>}
       </div>
     );
   }
