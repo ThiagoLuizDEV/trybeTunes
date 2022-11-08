@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import getMusics from '../services/musicsAPI';
-import AlbumMusic from '../components/AlbumMusic';
+import MusicCard from '../components/MusicCard';
 
 class Album extends React.Component {
   constructor() {
@@ -35,24 +35,30 @@ class Album extends React.Component {
     return (
       <div data-testid="page-album">
         <Header />
-        <h3 data-testid="artist-name">{ artistName }</h3>
-        <p data-testid="album-name">{ album }</p>
+
+        <h3 data-testid="artist-name">{artistName}</h3>
+        <p data-testid="album-name">{album}</p>
         <img src={ imagem } alt={ artistName } />
-        {
-          musicas.map((musica) => (
-            musica.previewUrl
-              ? (
-                <div>
-                  <AlbumMusic
-                    key={ musica.collectionName }
-                    trackName={ musica.trackName }
-                    previewUrl={ musica.previewUrl }
-                    ID={ musica.collectionName }
-                  />
-                </div>
-              ) : ''
-          ))
-        }
+
+        <div>
+          {
+            musicas.map((musica) => (
+              musica.previewUrl
+                ? (
+                  <div>
+                    <MusicCard
+                      key={ musica.collectionName }
+                      trackId={ musica.trackId }
+                      trackName={ musica.trackName }
+                      previewUrl={ musica.previewUrl }
+                      ID={ musica.collectionName }
+                      results={ musica }
+                    />
+                  </div>
+                ) : ''
+            ))
+          }
+        </div>
       </div>
     );
   }
